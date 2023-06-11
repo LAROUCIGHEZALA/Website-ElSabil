@@ -47,8 +47,8 @@ export class TasksComponent implements OnInit {
 
     this.http.get<Course[]>(apiUrl).subscribe(
       (response:any) => {
-        /*this.courses = response ;
-        for (let index = 0; index < response.length; index++) {
+        this.courses = response ;
+        /*for (let index = 0; index < response.length; index++) {
           this.courses[index].name=response[index].coursNom;
          
           
