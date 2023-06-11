@@ -7,6 +7,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Course } from '../models/course.model';
+import { S2Service } from '../services/s2.service';
+import { DatePipe } from '@angular/common'
 
 
 
@@ -26,6 +28,7 @@ export class ReponseTaskComponent implements OnInit {
   selectedFile!: File;
   coursesArray: Course[] = [];
   courses: Map<any, any> = new Map();
+  datePipe: DatePipe = new DatePipe('en-US')  ;
 
 
 
@@ -34,11 +37,12 @@ export class ReponseTaskComponent implements OnInit {
 
 
 
-  constructor(private apiService: ReponseService,private http:HttpClient,private snackBar: MatSnackBar) { }
+  constructor(private apiService: ReponseService,private http:HttpClient,private snackBar:MatSnackBar,private authservice:S2Service) { }
 
 
   ngOnInit(): void {
-    this.etudiantId= 1;//Number(this.authservice.getUserId());
+    this.etudiantId= Number(this.authservice.getUserId());
+    console.log( this.etudiantId);
     /*this.getTasks(3);*/
     this.apiService.getTasksForStudent(this.etudiantId).subscribe(
       (response:any) => {
@@ -67,7 +71,7 @@ export class ReponseTaskComponent implements OnInit {
   }*/
 
   downloadTask(taskId: number) {
-    const url = `http://localhost:8050/api/tasks/${taskId}/download`;
+    const url = `http://localhost:8080/api/tasks/${taskId}/download`;
     this.http.get(url, { responseType: 'blob', observe: 'response' }).subscribe(
       (response: HttpResponse<Blob>) => {
         const responseBody = response.body;
@@ -83,7 +87,13 @@ export class ReponseTaskComponent implements OnInit {
       }
     );
   }
-
+  formatDate(date: string | null): string {
+    if (date === null) {
+      return ''; // or return a default value like 'N/A' or 'No Date'
+    } else {
+      return this.datePipe.transform(date, 'dd/MM/yyyy') || ''; // handle null or invalid date formats
+    }
+  }
   getFilenameFromResponse(response: HttpResponse<Blob>): string {
     const contentDisposition = response.headers.get('content-disposition');
     const filenameMatch = contentDisposition && contentDisposition.match(/filename="?(.+)"?/);
