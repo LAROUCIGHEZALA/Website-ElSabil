@@ -6,6 +6,8 @@ import { Course } from '../models/course.model';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { S2Service } from '../services/s2.service';
+import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-tasks',
@@ -16,10 +18,12 @@ export class TasksComponent implements OnInit {
   tasks: Task[] = [];
 
   selectedTask: Task | null = null;
+  datePipe: DatePipe = new DatePipe('en-US')  ; // Adjust the locale according to your requirements
+
   editMode = false;
   task: Task = {
     name: '',
-    date: '',
+    date: '' ,
     course:null,
 
     file: null,
@@ -42,13 +46,15 @@ export class TasksComponent implements OnInit {
     this.getCoursesByTeacherId();
   }
   getCoursesByTeacherId(): void {
-    const teacherId =Number(this.authservice.getUserId()); // Replace with the actual teacher ID
+    const teacherId =Number(this.authservice.getUserId());
+     // Replace with the actual teacher ID
+     console.log(teacherId);
     const apiUrl = `http://localhost:8080/api/tasks/${teacherId}/teacher`; // Replace with your API endpoint
 
     this.http.get<Course[]>(apiUrl).subscribe(
       (response:any) => {
-        /*this.courses = response ;
-        for (let index = 0; index < response.length; index++) {
+        this.courses = response ;
+        /*for (let index = 0; index < response.length; index++) {
           this.courses[index].name=response[index].coursNom;
          
           
@@ -61,6 +67,15 @@ export class TasksComponent implements OnInit {
       }
     );
   }
+  formatDate(date: string | null): string {
+    if (date === null) {
+      return ''; // or return a default value like 'N/A' or 'No Date'
+    } else {
+      return this.datePipe.transform(date, 'dd/MM/yyyy') || ''; // handle null or invalid date formats
+    }
+  }
+  
+  
 
   fetchCourses() {
     this.courseService.getCourses().subscribe(
