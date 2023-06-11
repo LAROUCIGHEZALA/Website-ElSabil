@@ -164,7 +164,7 @@
       <tbody>
         <tr *ngFor="let task of tasks">
           <td>{{ task.name }}</td>
-          <td>{{ task.date }}</td>
+          <td>{{ formatDate(task.date) }}</td>
           <td>{{ task.course?.coursNom}}</td>
           
           <td>
