@@ -3,6 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { UserService } from '../ms1/services/user.service';
 import { User } from '../ms1/models/user.model';
 import { S2Service } from '../ms1/services/s2.service';
+import { Router } from '@angular/router';
 
 
 
@@ -46,7 +47,7 @@ export class PageChangeMotPasseComponent implements OnInit {
 
 
   constructor(
-    private userService: UserService,private login:UserService,private fb: FormBuilder,private s2:S2Service
+    private userService: UserService,private login:UserService,private fb: FormBuilder,private s2:S2Service,private router: Router,
   ) {
     this.f = this.fb.group({
       newPassword: [''],
@@ -109,6 +110,7 @@ export class PageChangeMotPasseComponent implements OnInit {
         () => {
           console.log('Password changed successfully');
           this.passwordForm.reset();
+          this.router.navigate(['/profil']);
         },
         error => console.error('Error changing password', error)
       );
